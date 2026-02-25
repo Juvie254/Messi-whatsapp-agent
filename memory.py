@@ -19,7 +19,7 @@ def get_or_create_user(platform: str, platform_user_id: str):
         user = User(
             platform=platform,
             platform_user_id=platform_user_id,
-            state="NEW",
+            #state="NEW",
             last_seen=datetime.utcnow()
         )
         db.add(user)

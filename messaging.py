@@ -1,5 +1,8 @@
 import requests
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
@@ -23,3 +26,5 @@ def send_whatsapp_message(phone: str, text: str):
     response.raise_for_status()
 print("🔑 TOKEN SET:", bool(WHATSAPP_TOKEN))
 print("📞 PHONE NUMBER ID SET:", bool(PHONE_NUMBER_ID))
+
+

@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
 from datetime import datetime
 from db import Base
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = "users"
@@ -12,11 +14,32 @@ class User(Base):
     # Conversation control
     state = Column(String, default="NEW")
 
-    # 🧠 Structured memory
-    product = Column(String, nullable=True)
-    color = Column(String, nullable=True)
-    size = Column(String, nullable=True)
-    quantity = Column(Integer, nullable=True)
-    location = Column(String, nullable=True)
+    # 🧠 Health conversation memory
+    condition = Column(String, nullable=True)
+    preferred_date = Column(String, nullable=True)
+    preferred_time = Column(String, nullable=True)
 
     last_seen = Column(DateTime, default=datetime.utcnow)
+
+class Booking(Base):
+    __tablename__ = "bookings"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    condition = Column(String, nullable=True)
+    preferred_date = Column(String, nullable=True)
+    preferred_time = Column(String, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    role = Column(String)  # "user" or "assistant"
+    content = Column(Text)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User")

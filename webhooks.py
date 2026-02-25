@@ -2,9 +2,6 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import PlainTextResponse
 
 from agent import process_message
-from memory import get_or_create_user
-from db import SessionLocal
-from models import User
 
 router = APIRouter()
 
@@ -50,11 +47,11 @@ async def whatsapp_webhook(request: Request):
         phone = ''.join(filter(str.isdigit, message["from"]))
         text = message["text"]["body"]
 
-        # 🔥 SINGLE ENTRY POINT
         process_message(phone, text)
 
         return {"status": "ok"}
 
     except Exception as e:
         print("Webhook error:", e)
+        return {"status": "error"}
         return {"status": "error"}
