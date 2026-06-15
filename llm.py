@@ -7,7 +7,7 @@ def call_llm(messages, model="groq/compound-mini"):
     response = client.chat.completions.create(
         model=model,
         messages=messages,
-        temperature=0.3,
-        max_tokens=200
+        temperature=0.4,
+        max_tokens=350
     )
     return response.choices[0].message.content.strip()

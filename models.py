@@ -3,43 +3,43 @@ from datetime import datetime
 from db import Base
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
-
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
     platform = Column(String, nullable=False)
     platform_user_id = Column(String, unique=True, nullable=False)
-
-    # Conversation control
     state = Column(String, default="NEW")
-
-    # 🧠 Health conversation memory
-    condition = Column(String, nullable=True)
-    preferred_date = Column(String, nullable=True)
-    preferred_time = Column(String, nullable=True)
-
     last_seen = Column(DateTime, default=datetime.utcnow)
+
+    # ── Real Estate Qualification Fields ──
+    client_name = Column(String, nullable=True)
+    intent = Column(String, nullable=True)      # "buy" or "rent"
+    budget = Column(String, nullable=True)
+    bedrooms = Column(String, nullable=True)
+    preferred_location = Column(String, nullable=True)
+    viewing_date = Column(String, nullable=True)
+    viewing_time = Column(String, nullable=True)
+
 
 class Booking(Base):
     __tablename__ = "bookings"
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-
-    condition = Column(String, nullable=True)
-    preferred_date = Column(String, nullable=True)
-    preferred_time = Column(String, nullable=True)
-
+    client_name = Column(String, nullable=True)
+    property_interest = Column(String, nullable=True)
+    viewing_date = Column(String, nullable=True)
+    viewing_time = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
 
 class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    role = Column(String)  # "user" or "assistant"
+    role = Column(String)
     content = Column(Text)
     timestamp = Column(DateTime, default=datetime.utcnow)
-
     user = relationship("User")

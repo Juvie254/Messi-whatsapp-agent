@@ -7,52 +7,49 @@ from messaging import send_whatsapp_message
 from models import Booking, Message
 from db import SessionLocal
 
-BUSINESS_OWNER_PHONE = "254714638286"  # Replace with Peter's real number
+BUSINESS_OWNER_PHONE = "254742836995"  # Replace with Peter's real number
 
 
+# Replace booking_ready function:
 def booking_ready(user):
     return (
-        user.condition and
-        user.preferred_date and
-        user.preferred_time
+        user.viewing_date and
+        user.viewing_time and
+        user.client_name  # name captured = serious buyer
     )
 
-
+# Replace create_booking:
 def create_booking(db, user):
     booking = Booking(
         user_id=user.id,
-        condition=user.condition,
-        preferred_date=user.preferred_date,
-        preferred_time=user.preferred_time
+        client_name=user.client_name,
+        property_interest=user.preferred_location,
+        viewing_date=user.viewing_date,
+        viewing_time=user.viewing_time
     )
-
     db.add(booking)
     db.commit()
     db.refresh(booking)
 
-    # Clear structured booking fields after saving
-    user.condition = None
-    user.preferred_date = None
-    user.preferred_time = None
+    # Clear viewing fields after booking saved
+    user.viewing_date = None
+    user.viewing_time = None
     db.commit()
-
     return booking
 
-
+# Replace notify_owner:
 def notify_owner(booking, user):
     send_whatsapp_message(
         BUSINESS_OWNER_PHONE,
         f"""
-📅 New Booking
-
-Client Phone: {user.platform_user_id}
-Condition: {booking.condition}
-Date: {booking.preferred_date}
-Time: {booking.preferred_time}
+🏠 New Viewing Booked!
+Client: {booking.client_name or 'Unknown'}
+Phone: {user.platform_user_id}
+Location Interest: {booking.property_interest or 'Not specified'}
+Date: {booking.viewing_date}
+Time: {booking.viewing_time}
 """
     )
-
-
 def process_message(phone: str, text: str):
 
     user, db = get_or_create_user("whatsapp", phone)
