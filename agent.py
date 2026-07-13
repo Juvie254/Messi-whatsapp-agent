@@ -7,7 +7,7 @@ from messaging import send_whatsapp_message
 from models import Booking, Message
 from db import SessionLocal
 
-BUSINESS_OWNER_PHONE = "254742836995"  # Replace with Peter's real number
+BUSINESS_OWNER_PHONE = "254141625276"  # Replace with Peter's real number
 
 
 # Replace booking_ready function:
