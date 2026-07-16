@@ -1,7 +1,5 @@
 # context_builder.py - Real Estate Version
 
-# ── Property Listings ──────────────────────────────────────
-# Edit this list per client. Just change the data here.
 PROPERTY_LISTINGS = [
     {
         "id": 1,
@@ -10,7 +8,8 @@ PROPERTY_LISTINGS = [
         "price_rent": "Ksh 85,000/month",
         "price_sale": None,
         "features": "DSQ, parking, backup generator, 2 mins from Yaya Centre",
-        "status": "Available"
+        "status": "Available",
+        "image_url": "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg"
     },
     {
         "id": 2,
@@ -19,7 +18,8 @@ PROPERTY_LISTINGS = [
         "price_rent": "Ksh 65,000/month",
         "price_sale": None,
         "features": "Gated community, borehole water, near SGR station",
-        "status": "Available"
+        "status": "Available",
+        "image_url": "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg"
     },
     {
         "id": 3,
@@ -28,11 +28,11 @@ PROPERTY_LISTINGS = [
         "price_rent": "Ksh 45,000/month",
         "price_sale": "Ksh 6.5M",
         "features": "Gym, rooftop pool, 24hr security",
-        "status": "Available"
+        "status": "Available",
+        "image_url": "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg"
     },
 ]
 
-# ── Build Listings String ──────────────────────────────────
 def format_listings():
     result = ""
     for p in PROPERTY_LISTINGS:
@@ -44,17 +44,14 @@ Property {p['id']}: {p['type']} – {p['location']}
 """
     return result.strip()
 
-
-# ── Main Prompt Builder ────────────────────────────────────
 def build_system_prompt(user, is_returning):
 
     greeting = (
-        "Welcome them back naturally. Reference their interest if known."
+        "Welcome them back naturally in one sentence. Reference their interest if known."
         if is_returning else
-        "Greet warmly. Introduce yourself briefly. Keep it short."
+        "Greet warmly in one sentence. Introduce yourself briefly."
     )
 
-    # Qualification status summary
     qualification = f"""
 WHAT WE KNOW ABOUT THIS BUYER SO FAR:
 - Intent (buy/rent): {user.intent or 'Not yet known'}
@@ -67,8 +64,7 @@ WHAT WE KNOW ABOUT THIS BUYER SO FAR:
 """
 
     return f"""
-You are Amara, a professional property assistant for 
-Prestige Realty Nairobi (replace with real agency name).
+You are Amara, a professional property assistant for Prestige Realty Nairobi.
 You assist potential buyers and tenants on WhatsApp.
 
 GREETING INSTRUCTION:
@@ -79,32 +75,32 @@ AVAILABLE PROPERTIES:
 
 {qualification}
 
-YOUR CONVERSATION FLOW:
-Step 1 – Understand their need
-  Ask: Are they buying or renting?
-  Ask ONE question at a time. Never ask 2+ at once.
+STRICT CONVERSATION RULES — FOLLOW THESE EXACTLY:
+- Send ONE message per client message. Never send multiple replies at once.
+- Ask ONE question per message maximum. Never combine two questions.
+- You already have the client's WhatsApp number — NEVER ask for their phone number.
+- If client says stop asking questions — confirm what you know in one sentence and wait silently.
+- If client seems frustrated — reply in one short sentence only, no questions.
+- Never repeat the same question twice in a conversation.
+- Never end every message with a question — read the mood first.
+- If no matching property exists — offer to notify them when one appears, get their name only, then stop.
 
-Step 2 – Qualify them
-  Collect: budget → bedrooms → preferred location → move-in timeline
-  Do this naturally in conversation, not like a form.
-
-Step 3 – Match and recommend
-  Once you have budget + bedrooms + location →
-  recommend the best matching property from the list.
-  Keep it to 1-2 properties max. Don't overwhelm.
-
-Step 4 – Book a viewing
-  Once they're interested → get: name, phone, preferred date + time.
-  Confirm like this:
-  "Perfect [Name]! Viewing for [Property] on [Date] at [Time] is noted.
-  The agent will confirm within 1 hour. See you then! 🏠"
+CONVERSATION FLOW:
+Step 1 — Ask if buying or renting. One question only.
+Step 2 — Collect budget, bedrooms, location naturally one at a time.
+Step 3 — Match and recommend 1-2 properties maximum.
+Step 4 — Offer photos: say exactly "Would you like me to send you the photos? 📸"
+Step 5 — If they say yes to photos, reply with exactly: SEND_PHOTOS:[property_id]
+         Example: SEND_PHOTOS:1
+         Do not explain this to the client, just output that text.
+Step 6 — Book viewing: get name, preferred date and time only.
+         Confirm: "Perfect [Name]! Viewing for [Property] on [Date] at [Time] is noted. The agent will confirm within 1 hour. 🏠"
 
 LANGUAGE RULES:
 - If they write in Swahili → reply in Swahili
 - If they mix English/Swahili → match their style
 - Keep replies SHORT (3-4 lines max)
 - Sound like a real helpful person, not a bot
-- End every message with a question to keep conversation moving
 
 M-PESA INFO (when asked):
 - Paybill: [ADD CLIENT PAYBILL]
